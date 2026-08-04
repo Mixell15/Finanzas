@@ -55,10 +55,11 @@ input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(42,1
 .b-warn{background:#faeeda;color:#854f0b}
 .b-ok{background:#eaf3de;color:#3b6d11}
 .b-elim{background:#fcebeb;color:#a32d2d}
-.chk-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none;margin-top:6px}
-.chk-row input[type=checkbox]{width:16px;height:16px;cursor:pointer;padding:0;background:none;border:none;box-shadow:none;-webkit-appearance:auto;appearance:auto}
+.b-rec{background:#e6f1fb;color:#185fa5}
+.chk-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none;margin-top:6px;flex-wrap:wrap}
+.chk-row input[type=checkbox]{width:16px;height:16px;cursor:pointer;padding:0;background:none;border:none;box-shadow:none;-webkit-appearance:auto;appearance:auto;flex-shrink:0}
 .add-block{margin-top:14px;border-top:1px solid var(--border);padding-top:14px;display:flex;flex-direction:column;gap:8px}
-.add-row2{display:flex;gap:8px;align-items:center}
+.add-row2{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .add-row2 input[type=number]{width:130px}
 .btn{background:none;border:1px solid var(--border-s);border-radius:var(--radius);padding:10px 16px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
 .btn:active{background:var(--surface1)}
@@ -79,11 +80,16 @@ input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(42,1
 .chart-wrap{position:relative;height:230px}
 hr.div{border:none;border-top:1.5px solid var(--border-s);margin:10px 0 6px}
 .total-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0 0;font-weight:600;font-size:15px}
-.legend{display:flex;gap:14px;font-size:12px;color:var(--sec);margin-bottom:8px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--sec);margin-bottom:8px;flex-wrap:wrap}
 .legend span{display:flex;align-items:center;gap:5px}
 .ld{width:10px;height:10px;border-radius:2px}
 .comp-info{background:var(--surface1);border-radius:var(--radius);padding:10px 12px;margin-top:8px;font-size:12px;color:var(--sec);line-height:1.7}
 .comp-info strong{color:var(--text)}
+.ahorro-box{background:var(--surface1);border-radius:var(--radius);padding:16px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px}
+.ahorro-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ahorro-row label{font-size:13px;color:var(--sec);font-weight:500;flex:1;min-width:140px}
+.ahorro-val{font-size:22px;font-weight:700}
+.info-pill{display:inline-flex;align-items:center;gap:6px;background:var(--surface1);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--sec);margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -106,14 +112,17 @@ hr.div{border:none;border-top:1.5px solid var(--border-s);margin:10px 0 6px}
     <button class="tab" data-tab="gastos">⬇️ Gastos</button>
     <button class="tab" data-tab="super">🛒 Súper</button>
     <button class="tab" data-tab="salidas">🎉 Salidas</button>
+    <button class="tab" data-tab="ahorro">🏦 Ahorro</button>
     <button class="tab" data-tab="grafica">📈 Gráfica</button>
   </div>
 
+  <!-- RESUMEN -->
   <div class="section active" id="tab-resumen">
     <div class="kpi-row" id="kpiRow"></div>
     <div class="card" id="resumenDetalle"></div>
   </div>
 
+  <!-- INGRESOS -->
   <div class="section" id="tab-ingresos">
     <div class="card">
       <div class="card-title">⬆️ Ingresos del mes</div>
@@ -128,9 +137,10 @@ hr.div{border:none;border-top:1.5px solid var(--border-s);margin:10px 0 6px}
     </div>
   </div>
 
+  <!-- GASTOS -->
   <div class="section" id="tab-gastos">
     <div class="card">
-      <div class="card-title">⬇️ Gastos fijos &nbsp;<span style="font-weight:400;color:var(--muted);font-size:12px">marca los que podrías eliminar</span></div>
+      <div class="card-title">⬇️ Gastos fijos &nbsp;<span style="font-weight:400;color:var(--muted);font-size:12px">🔁 recurrente = se copia cada mes</span></div>
       <div id="listaGastos"></div>
       <div class="add-block">
         <input type="text" id="newGastoLabel" placeholder="Concepto (ej: Renta, Netflix…)" />
@@ -142,6 +152,7 @@ hr.div{border:none;border-top:1.5px solid var(--border-s);margin:10px 0 6px}
     </div>
   </div>
 
+  <!-- SÚPER -->
   <div class="section" id="tab-super">
     <div class="card">
       <div class="card-title">🛒 Supermercado por semana</div>
@@ -156,6 +167,7 @@ hr.div{border:none;border-top:1.5px solid var(--border-s);margin:10px 0 6px}
     </div>
   </div>
 
+  <!-- SALIDAS -->
   <div class="section" id="tab-salidas">
     <div class="card">
       <div class="card-title">🎉 Salidas por semana</div>
@@ -170,6 +182,26 @@ hr.div{border:none;border-top:1.5px solid var(--border-s);margin:10px 0 6px}
     </div>
   </div>
 
+  <!-- AHORRO -->
+  <div class="section" id="tab-ahorro">
+    <div class="card">
+      <div class="card-title">🏦 Mi ahorro acumulado</div>
+      <div class="ahorro-box">
+        <div class="ahorro-row">
+          <label>Ahorro inicial (antes de usar este dashboard):</label>
+          <input type="number" id="ahorroInicial" placeholder="0" inputmode="decimal" style="width:150px" />
+        </div>
+        <p style="font-size:12px;color:var(--muted)">Este es el monto que ya tenías ahorrado. La gráfica sumará o restará la ganancia neta de cada mes a partir de aquí.</p>
+      </div>
+      <div id="ahorroActual"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📈 Proyección de ahorro</div>
+      <div class="chart-wrap"><canvas id="chartAhorro"></canvas></div>
+    </div>
+  </div>
+
+  <!-- GRÁFICA -->
   <div class="section" id="tab-grafica">
     <div class="card">
       <div class="card-title">📈 Ingreso neto mes a mes</div>
@@ -188,12 +220,16 @@ hr.div{border:none;border-top:1.5px solid var(--border-s);margin:10px 0 6px}
 </div>
 <script>
 const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-let mes=new Date().getMonth(),anio=new Date().getFullYear();
+let mes=new Date().getMonth(), anio=new Date().getFullYear();
 
 function defData(){
   return{
     ingresos:[{label:'Salario',amt:''}],
-    gastos:[{label:'Renta',amt:'',el:false},{label:'Internet',amt:'',el:false},{label:'Suscripciones',amt:'',el:true}],
+    gastos:[
+      {label:'Renta',amt:'',el:false,rec:true},
+      {label:'Internet',amt:'',el:false,rec:true},
+      {label:'Suscripciones',amt:'',el:true,rec:false}
+    ],
     limiteSuper:'',limiteSalidas:'',
     semanas:[{s:'',sal:''},{s:'',sal:''},{s:'',sal:''},{s:'',sal:''}]
   };
@@ -202,29 +238,89 @@ function defData(){
 let db={};
 function loadDB(){try{return JSON.parse(localStorage.getItem('fdash')||'{}')}catch(e){return{}}}
 function saveDB(){localStorage.setItem('fdash',JSON.stringify(db))}
+function getAhorroInicial(){return parseFloat(localStorage.getItem('fdash_ahorro')||'0')||0}
+function setAhorroInicial(v){localStorage.setItem('fdash_ahorro',v)}
+
 db=loadDB();
 
-const key=()=>`${anio}-${mes}`;
-function gd(){if(!db[key()])db[key()]=defData();return db[key()];}
+const key=()=>anio+'-'+mes;
+
+// Obtiene datos del mes, copiando gastos recurrentes si es un mes nuevo
+function gd(){
+  if(!db[key()]){
+    var nuevo=defData();
+    // Buscar gastos recurrentes en cualquier mes anterior
+    var gastosRec=getGastosRecurrentes();
+    if(gastosRec.length>0) nuevo.gastos=gastosRec.map(function(g){return{label:g.label,amt:g.amt,el:g.el,rec:true}});
+    // Copiar límites del mes anterior
+    var limites=getLimitesAnteriores();
+    if(limites.limiteSuper) nuevo.limiteSuper=limites.limiteSuper;
+    if(limites.limiteSalidas) nuevo.limiteSalidas=limites.limiteSalidas;
+    db[key()]=nuevo;
+    saveDB();
+  }
+  return db[key()];
+}
+
+function getGastosRecurrentes(){
+  // Busca hacia atrás hasta 12 meses para encontrar gastos recurrentes
+  for(var i=1;i<=12;i++){
+    var m2=mes-i, a2=anio;
+    if(m2<0){m2+=12;a2--;}
+    var k=a2+'-'+m2;
+    if(db[k] && db[k].gastos){
+      var recs=db[k].gastos.filter(function(g){return g.rec});
+      if(recs.length>0) return recs;
+    }
+  }
+  return[];
+}
+
+function getLimitesAnteriores(){
+  for(var i=1;i<=12;i++){
+    var m2=mes-i, a2=anio;
+    if(m2<0){m2+=12;a2--;}
+    var k=a2+'-'+m2;
+    if(db[k] && (db[k].limiteSuper||db[k].limiteSalidas)){
+      return{limiteSuper:db[k].limiteSuper,limiteSalidas:db[k].limiteSalidas};
+    }
+  }
+  return{};
+}
 
 function fmt(n){return'$'+Number(n||0).toLocaleString('es-MX',{minimumFractionDigits:0,maximumFractionDigits:0})}
 function toN(v){return parseFloat(v)||0}
 
-function sumIng(d){return d.ingresos.reduce((a,i)=>a+toN(i.amt),0)}
-function sumGF(d){return d.gastos.reduce((a,g)=>a+toN(g.amt),0)}
-function sumS(d){return d.semanas.reduce((a,w)=>a+toN(w.s),0)}
-function sumSal(d){return d.semanas.reduce((a,w)=>a+toN(w.sal),0)}
+function sumIng(d){return d.ingresos.reduce(function(a,i){return a+toN(i.amt)},0)}
+function sumGF(d){return d.gastos.reduce(function(a,g){return a+toN(g.amt)},0)}
+function sumS(d){return d.semanas.reduce(function(a,w){return a+toN(w.s)},0)}
+function sumSal(d){return d.semanas.reduce(function(a,w){return a+toN(w.sal)},0)}
 function sumGas(d){return sumGF(d)+sumS(d)+sumSal(d)}
 function neto(d){return sumIng(d)-sumGas(d)}
 
+// Calcula el ahorro acumulado hasta un mes dado
+function calcAhorroAcumulado(hastaAnio, hastaMes){
+  var base=getAhorroInicial();
+  // Ordenar meses del db cronológicamente y sumar hasta el mes indicado
+  Object.keys(db).forEach(function(k){
+    var parts=k.split('-');
+    var a=parseInt(parts[0]), m=parseInt(parts[1]);
+    if(a<hastaAnio||(a===hastaAnio&&m<=hastaMes)){
+      base+=neto(db[k]);
+    }
+  });
+  return base;
+}
+
 // TABS
-document.querySelectorAll('.tab').forEach(btn=>{
+document.querySelectorAll('.tab').forEach(function(btn){
   btn.addEventListener('click',function(){
-    const t=this.dataset.tab;
-    document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
-    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    var t=this.dataset.tab;
+    document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('active',b.dataset.tab===t)});
+    document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
     document.getElementById('tab-'+t).classList.add('active');
     if(t==='grafica')setTimeout(renderCharts,60);
+    if(t==='ahorro')setTimeout(renderAhorro,60);
   });
 });
 
@@ -239,196 +335,172 @@ document.getElementById('nombreUsuario').addEventListener('input',function(){
   localStorage.setItem('fdash_name',this.value);
 });
 
+// KPI
 function renderKPI(){
-  const d=gd();
-  const ing=sumIng(d),gas=sumGas(d),net=neto(d),pct=ing?Math.round(gas/ing*100):0;
+  var d=gd();
+  var ing=sumIng(d),gas=sumGas(d),net=neto(d),pct=ing?Math.round(gas/ing*100):0;
   document.getElementById('kpiRow').innerHTML=
     '<div class="kpi"><div class="kpi-lbl">Ingresos</div><div class="kpi-val pos">'+fmt(ing)+'</div></div>'+
     '<div class="kpi"><div class="kpi-lbl">Gastos</div><div class="kpi-val neg">'+fmt(gas)+'</div></div>'+
     '<div class="kpi"><div class="kpi-lbl">Ganancia neta</div><div class="kpi-val '+(net>=0?'pos':'neg')+'">'+fmt(net)+'</div></div>'+
     '<div class="kpi"><div class="kpi-lbl">% gastado</div><div class="kpi-val">'+pct+'%</div></div>';
-  const elim=d.gastos.filter(function(g){return g.el}).reduce(function(a,g){return a+toN(g.amt)},0);
+  var elim=d.gastos.filter(function(g){return g.el}).reduce(function(a,g){return a+toN(g.amt)},0);
+  var ahorroMes=calcAhorroAcumulado(anio,mes);
   document.getElementById('resumenDetalle').innerHTML=
     '<div class="card-title">Desglose del mes</div>'+
     '<div class="item"><div class="item-top"><span class="item-label">Gastos fijos</span><span class="neg">'+fmt(sumGF(d))+'</span></div></div>'+
     '<div class="item"><div class="item-top"><span class="item-label">🛒 Supermercado</span><span class="neg">'+fmt(sumS(d))+'</span></div></div>'+
     '<div class="item"><div class="item-top"><span class="item-label">🎉 Salidas</span><span class="neg">'+fmt(sumSal(d))+'</span></div></div>'+
     (elim>0?'<div class="item"><div class="item-top"><span class="item-label" style="color:#a32d2d">🗑️ Podrías eliminar</span><span style="color:#a32d2d;font-weight:600">'+fmt(elim)+'</span></div></div>':'')+
-    '<hr class="div"><div class="total-row"><span>Ganancia neta</span><span class="'+(net>=0?'pos':'neg')+'" style="font-size:18px">'+fmt(net)+'</span></div>';
+    '<hr class="div">'+
+    '<div class="total-row"><span>Ganancia neta</span><span class="'+(net>=0?'pos':'neg')+'" style="font-size:18px">'+fmt(net)+'</span></div>'+
+    '<div class="total-row" style="margin-top:6px;font-size:13px;color:var(--sec)"><span>🏦 Ahorro acumulado al cierre</span><span class="'+(ahorroMes>=0?'pos':'neg')+'" style="font-size:15px">'+fmt(ahorroMes)+'</span></div>';
 }
 
+// INGRESOS
 function renderIngresos(){
-  const d=gd();
-  const cont=document.getElementById('listaIngresos');
+  var d=gd();
+  var cont=document.getElementById('listaIngresos');
   cont.innerHTML='';
   d.ingresos.forEach(function(it,i){
-    const div=document.createElement('div');
-    div.className='item';
-    const top=document.createElement('div');
-    top.className='item-top';
-    const lbl=document.createElement('span');
-    lbl.className='item-label';
-    lbl.textContent=it.label;
-    const ctrl=document.createElement('div');
-    ctrl.className='item-controls';
-    const inp=document.createElement('input');
+    var div=document.createElement('div');div.className='item';
+    var top=document.createElement('div');top.className='item-top';
+    var lbl=document.createElement('span');lbl.className='item-label';lbl.textContent=it.label;
+    var ctrl=document.createElement('div');ctrl.className='item-controls';
+    var inp=document.createElement('input');
     inp.type='number';inp.inputMode='decimal';inp.placeholder='0';
     inp.value=it.amt||'';inp.style.width='130px';
     inp.dataset.idx=i;inp.dataset.field='ing-amt';
-    const del=document.createElement('button');
-    del.className='btn-icon';del.textContent='✕';
-    del.dataset.idx=i;del.dataset.action='del-ing';
+    var del=document.createElement('button');
+    del.className='btn-icon';del.textContent='✕';del.dataset.idx=i;del.dataset.action='del-ing';
     ctrl.appendChild(inp);ctrl.appendChild(del);
-    top.appendChild(lbl);top.appendChild(ctrl);
-    div.appendChild(top);cont.appendChild(div);
+    top.appendChild(lbl);top.appendChild(ctrl);div.appendChild(top);cont.appendChild(div);
   });
 }
 
 document.getElementById('btnAddIng').addEventListener('click',function(){
-  const l=document.getElementById('newIngLabel').value.trim();
+  var l=document.getElementById('newIngLabel').value.trim();
   if(!l)return;
   gd().ingresos.push({label:l,amt:document.getElementById('newIngAmt').value});
-  document.getElementById('newIngLabel').value='';
-  document.getElementById('newIngAmt').value='';
+  document.getElementById('newIngLabel').value='';document.getElementById('newIngAmt').value='';
   saveDB();renderIngresos();renderKPI();
 });
 
+// GASTOS
 function renderGastos(){
-  const d=gd();
-  const cont=document.getElementById('listaGastos');
+  var d=gd();
+  var cont=document.getElementById('listaGastos');
   cont.innerHTML='';
   d.gastos.forEach(function(it,i){
-    const div=document.createElement('div');
-    div.className='item';
-    const top=document.createElement('div');
-    top.className='item-top';
-    const lbl=document.createElement('span');
-    lbl.className='item-label';
-    lbl.innerHTML=it.label+(it.el?' <span class="badge b-elim">Por eliminar</span>':'');
-    const ctrl=document.createElement('div');
-    ctrl.className='item-controls';
-    const inp=document.createElement('input');
+    var div=document.createElement('div');div.className='item';
+    var top=document.createElement('div');top.className='item-top';
+    var lbl=document.createElement('span');lbl.className='item-label';
+    var badges='';
+    if(it.rec) badges+=' <span class="badge b-rec">🔁 Recurrente</span>';
+    if(it.el) badges+=' <span class="badge b-elim">🗑️ Por eliminar</span>';
+    lbl.innerHTML=it.label+badges;
+    var ctrl=document.createElement('div');ctrl.className='item-controls';
+    var inp=document.createElement('input');
     inp.type='number';inp.inputMode='decimal';inp.placeholder='0';
     inp.value=it.amt||'';inp.style.width='130px';
     inp.dataset.idx=i;inp.dataset.field='gas-amt';
-    const del=document.createElement('button');
-    del.className='btn-icon';del.textContent='✕';
-    del.dataset.idx=i;del.dataset.action='del-gas';
+    var del=document.createElement('button');
+    del.className='btn-icon';del.textContent='✕';del.dataset.idx=i;del.dataset.action='del-gas';
     ctrl.appendChild(inp);ctrl.appendChild(del);
-    top.appendChild(lbl);top.appendChild(ctrl);
-    const chk=document.createElement('label');
-    chk.className='chk-row';
-    const cb=document.createElement('input');
-    cb.type='checkbox';cb.checked=it.el;
-    cb.dataset.idx=i;cb.dataset.field='gas-el';
-    chk.appendChild(cb);
-    chk.appendChild(document.createTextNode(' Marcar para eliminar en el futuro'));
-    div.appendChild(top);div.appendChild(chk);cont.appendChild(div);
+    top.appendChild(lbl);top.appendChild(ctrl);div.appendChild(top);
+
+    // checkboxes
+    var chkWrap=document.createElement('div');
+    chkWrap.style.cssText='display:flex;gap:16px;flex-wrap:wrap;margin-top:6px';
+
+    var chkRec=document.createElement('label');chkRec.className='chk-row';
+    var cbRec=document.createElement('input');cbRec.type='checkbox';cbRec.checked=!!it.rec;
+    cbRec.dataset.idx=i;cbRec.dataset.field='gas-rec';
+    chkRec.appendChild(cbRec);chkRec.appendChild(document.createTextNode(' Se repite cada mes'));
+
+    var chkEl=document.createElement('label');chkEl.className='chk-row';
+    var cbEl=document.createElement('input');cbEl.type='checkbox';cbEl.checked=!!it.el;
+    cbEl.dataset.idx=i;cbEl.dataset.field='gas-el';
+    chkEl.appendChild(cbEl);chkEl.appendChild(document.createTextNode(' Quiero eliminarlo'));
+
+    chkWrap.appendChild(chkRec);chkWrap.appendChild(chkEl);
+    div.appendChild(chkWrap);cont.appendChild(div);
   });
 }
 
 document.getElementById('btnAddGasto').addEventListener('click',function(){
-  const l=document.getElementById('newGastoLabel').value.trim();
+  var l=document.getElementById('newGastoLabel').value.trim();
   if(!l)return;
-  gd().gastos.push({label:l,amt:document.getElementById('newGastoAmt').value,el:false});
-  document.getElementById('newGastoLabel').value='';
-  document.getElementById('newGastoAmt').value='';
+  gd().gastos.push({label:l,amt:document.getElementById('newGastoAmt').value,el:false,rec:false});
+  document.getElementById('newGastoLabel').value='';document.getElementById('newGastoAmt').value='';
   saveDB();renderGastos();renderKPI();
 });
 
+// SEMANAS
 function renderWeeks(contId,totalId,field,limId){
-  const d=gd();
-  const lim=toN(d[limId]);
+  var d=gd();
+  var lim=toN(d[limId]);
   document.getElementById(limId).value=d[limId]||'';
-  const cont=document.getElementById(contId);
+  var cont=document.getElementById(contId);
   cont.innerHTML='';
-  let totalMes=0,excAcum=0;
+  var totalMes=0,excAcum=0;
 
   d.semanas.forEach(function(w,i){
-    const val=toN(w[field]);
+    var val=toN(w[field]);
     totalMes+=val;
-    const div=document.createElement('div');
-    div.className='week-block';
-
-    const hdr=document.createElement('div');
-    hdr.className='week-hdr';
-    const lbl=document.createElement('span');
-    lbl.className='week-lbl';
-    lbl.textContent='Semana '+(i+1);
+    var div=document.createElement('div');div.className='week-block';
+    var hdr=document.createElement('div');hdr.className='week-hdr';
+    var lbl=document.createElement('span');lbl.className='week-lbl';lbl.textContent='Semana '+(i+1);
     hdr.appendChild(lbl);
 
     if(lim>0){
-      const excSem=val-lim;
-      excAcum+=excSem;
-      const over=val>lim;
-
-      const badges=document.createElement('div');
-      badges.className='week-badges';
+      var excSem=val-lim;excAcum+=excSem;
+      var over=val>lim;
+      var badges=document.createElement('div');badges.className='week-badges';
       if(val>0){
-        const b=document.createElement('span');
+        var b=document.createElement('span');
         b.className='badge '+(over?'b-warn':'b-ok');
         b.textContent=over?'Excedido '+fmt(val-lim):'Disponible '+fmt(lim-val);
         badges.appendChild(b);
       }
-      hdr.appendChild(badges);
-      div.appendChild(hdr);
+      hdr.appendChild(badges);div.appendChild(hdr);
 
-      const row=document.createElement('div');
-      row.className='week-row';
-      const rowLbl=document.createElement('label');
-      rowLbl.textContent='Gasto:';
-      const inp=document.createElement('input');
+      var row=document.createElement('div');row.className='week-row';
+      var rowLbl=document.createElement('label');rowLbl.textContent='Gasto:';
+      var inp=document.createElement('input');
       inp.type='number';inp.inputMode='decimal';inp.placeholder='0';
       inp.value=w[field]||'';inp.style.width='140px';
       inp.dataset.week=i;inp.dataset.field=field;
-      const span=document.createElement('span');
-      span.style.cssText='font-size:13px;font-weight:600';
-      span.textContent=fmt(val);
-      row.appendChild(rowLbl);row.appendChild(inp);row.appendChild(span);
-      div.appendChild(row);
+      var span=document.createElement('span');
+      span.style.cssText='font-size:13px;font-weight:600';span.textContent=fmt(val);
+      row.appendChild(rowLbl);row.appendChild(inp);row.appendChild(span);div.appendChild(row);
 
-      const bar=document.createElement('div');
-      bar.className='progress-bar';
-      const fill=document.createElement('div');
-      fill.className='progress-fill';
-      const pct=Math.min(Math.round(val/lim*100),100);
-      fill.style.width=pct+'%';
+      var bar=document.createElement('div');bar.className='progress-bar';
+      var fill=document.createElement('div');fill.className='progress-fill';
+      fill.style.width=Math.min(Math.round(val/lim*100),100)+'%';
       fill.style.background=over?'var(--red)':'var(--green)';
       bar.appendChild(fill);div.appendChild(bar);
 
-      // Compensación
-      if(lim>0 && i<3){
-        const limComp=Math.max(0,lim-excAcum);
-        let compText='';
+      if(i<3 && val>0){
+        var limComp=Math.max(0,lim-excAcum);
+        var compText='';
         if(excAcum>0){
-          compText='⚠️ Te pasaste <strong>'+fmt(excAcum)+'</strong> en total hasta aquí.<br>'+
-            'Para compensar, gasta máximo <strong style="color:'+(limComp===0?'var(--red)':'var(--amber)')+'">'+fmt(limComp)+'</strong> la semana '+(i+2)+'.';
-        } else if(excAcum<0 && val>0){
-          compText='✅ Llevas un ahorro acumulado de <strong style="color:var(--green)">'+fmt(Math.abs(excAcum))+'</strong>.<br>'+
-            'Puedes gastar hasta <strong style="color:var(--green)">'+fmt(lim+Math.abs(excAcum))+'</strong> la semana '+(i+2)+' sin exceder el promedio.';
+          compText='⚠️ Exceso acumulado: <strong>'+fmt(excAcum)+'</strong><br>Presupuesto recomendado semana '+(i+2)+': <strong style="color:'+(limComp===0?'var(--red)':'var(--amber)')+'">'+fmt(limComp)+'</strong>';
+        } else if(excAcum<0){
+          compText='✅ Ahorro acumulado: <strong style="color:var(--green)">'+fmt(Math.abs(excAcum))+'</strong><br>Puedes gastar hasta <strong style="color:var(--green)">'+fmt(lim+Math.abs(excAcum))+'</strong> la semana '+(i+2);
         }
-        if(compText && val>0){
-          const ci=document.createElement('div');
-          ci.className='comp-info';
-          ci.innerHTML=compText;
-          div.appendChild(ci);
-        }
+        if(compText){var ci=document.createElement('div');ci.className='comp-info';ci.innerHTML=compText;div.appendChild(ci);}
       }
     } else {
       div.appendChild(hdr);
-      const row=document.createElement('div');
-      row.className='week-row';
-      const rowLbl=document.createElement('label');
-      rowLbl.textContent='Gasto:';
-      const inp=document.createElement('input');
-      inp.type='number';inp.inputMode='decimal';inp.placeholder='0';
-      inp.value=w[field]||'';inp.style.width='140px';
-      inp.dataset.week=i;inp.dataset.field=field;
-      const span=document.createElement('span');
-      span.style.cssText='font-size:13px;font-weight:600';
-      span.textContent=fmt(val);
-      row.appendChild(rowLbl);row.appendChild(inp);row.appendChild(span);
-      div.appendChild(row);
+      var row2=document.createElement('div');row2.className='week-row';
+      var rowLbl2=document.createElement('label');rowLbl2.textContent='Gasto:';
+      var inp2=document.createElement('input');
+      inp2.type='number';inp2.inputMode='decimal';inp2.placeholder='0';
+      inp2.value=w[field]||'';inp2.style.width='140px';
+      inp2.dataset.week=i;inp2.dataset.field=field;
+      var span2=document.createElement('span');span2.style.cssText='font-size:13px;font-weight:600';span2.textContent=fmt(val);
+      row2.appendChild(rowLbl2);row2.appendChild(inp2);row2.appendChild(span2);div.appendChild(row2);
     }
     cont.appendChild(div);
   });
@@ -438,63 +510,118 @@ function renderWeeks(contId,totalId,field,limId){
 function renderSuper(){renderWeeks('semanasSuper','totalSuper','s','limiteSuper');renderKPI();}
 function renderSalidas(){renderWeeks('semanasSalidas','totalSalidas','sal','limiteSalidas');renderKPI();}
 
-// Delegated events — funciona en mobile/Safari
+// AHORRO
+var cAhorro=null;
+function renderAhorro(){
+  var inicial=getAhorroInicial();
+  document.getElementById('ahorroInicial').value=inicial||'';
+
+  // Calcular ahorro actual (hasta mes actual)
+  var ahorroActual=calcAhorroAcumulado(anio,mes);
+  var diff=ahorroActual-inicial;
+
+  document.getElementById('ahorroActual').innerHTML=
+    '<div style="margin-bottom:10px">'+
+    '<div class="kpi-lbl" style="margin-bottom:6px">Ahorro acumulado al cierre de '+MESES[mes]+'</div>'+
+    '<div class="ahorro-val '+(ahorroActual>=0?'pos':'neg')+'">'+fmt(ahorroActual)+'</div>'+
+    (inicial?'<div style="font-size:12px;color:var(--muted);margin-top:4px">'+(diff>=0?'📈 +':'📉 ')+fmt(diff)+' desde tu ahorro inicial</div>':'')+'</div>';
+
+  // Gráfica de ahorro
+  var isDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  var gridC=isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
+  var txtC=isDark?'#b0afa8':'#52514e';
+  var labels=[],ahorroArr=[];
+  var acum=inicial;
+  for(var m=0;m<12;m++){
+    var k=anio+'-'+m;
+    labels.push(MESES[m].slice(0,3));
+    if(db[k]) acum+=neto(db[k]);
+    ahorroArr.push(acum);
+  }
+  if(cAhorro) cAhorro.destroy();
+  cAhorro=new Chart(document.getElementById('chartAhorro'),{
+    type:'line',
+    data:{labels:labels,datasets:[{
+      label:'Ahorro',data:ahorroArr,
+      borderColor:'#1baf7a',backgroundColor:'rgba(27,175,122,0.08)',
+      pointBackgroundColor:ahorroArr.map(function(v){return v>=0?'#1baf7a':'#e34948'}),
+      pointRadius:5,borderWidth:2,tension:0.3,fill:true
+    }]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return' '+fmt(c.raw)}}}},
+      scales:{
+        y:{ticks:{color:txtC,font:{size:10},callback:function(v){return'$'+(v/1000).toFixed(0)+'k'}},grid:{color:gridC}},
+        x:{ticks:{color:txtC,font:{size:10},autoSkip:false},grid:{display:false}}
+      }
+    }
+  });
+}
+
+// GRÁFICAS
+var cNeto=null,cComp=null;
+function renderCharts(){
+  var isDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  var gridC=isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
+  var txtC=isDark?'#b0afa8':'#52514e';
+  var labels=[],netoArr=[],ingArr=[],gasArr=[];
+  for(var m=0;m<12;m++){
+    var k=anio+'-'+m;
+    var d=db[k]||defData();
+    labels.push(MESES[m].slice(0,3));
+    netoArr.push(neto(d));ingArr.push(sumIng(d));gasArr.push(sumGas(d));
+  }
+  var fmtT=function(v){return'$'+(v/1000).toFixed(0)+'k'};
+  var tick={color:txtC,font:{size:10}};var grid={color:gridC};
+  if(cNeto)cNeto.destroy();if(cComp)cComp.destroy();
+  cNeto=new Chart(document.getElementById('chartNeto'),{
+    type:'line',
+    data:{labels:labels,datasets:[{label:'Neto',data:netoArr,borderColor:'#2a78d6',backgroundColor:'rgba(42,120,214,0.08)',pointBackgroundColor:'#2a78d6',pointRadius:4,borderWidth:2,tension:0.3,fill:true}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:Object.assign({},tick,{callback:fmtT}),grid:grid},x:{ticks:Object.assign({},tick,{autoSkip:false}),grid:{display:false}}}}
+  });
+  cComp=new Chart(document.getElementById('chartComp'),{
+    type:'bar',
+    data:{labels:labels,datasets:[
+      {label:'Ingresos',data:ingArr,backgroundColor:'rgba(27,175,122,0.75)',borderRadius:3},
+      {label:'Gastos',data:gasArr,backgroundColor:'rgba(227,73,72,0.75)',borderRadius:3}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:Object.assign({},tick,{callback:fmtT}),grid:grid},x:{ticks:Object.assign({},tick,{autoSkip:false}),grid:{display:false}}}}
+  });
+}
+
+// EVENTOS DELEGADOS
 document.addEventListener('input',function(e){
-  const t=e.target,d=gd();
+  var t=e.target,d=gd();
   if(t.dataset.field==='ing-amt'){d.ingresos[+t.dataset.idx].amt=t.value;saveDB();renderKPI();}
   if(t.dataset.field==='gas-amt'){d.gastos[+t.dataset.idx].amt=t.value;saveDB();renderKPI();}
   if(t.dataset.field==='s'){d.semanas[+t.dataset.week].s=t.value;saveDB();renderSuper();}
   if(t.dataset.field==='sal'){d.semanas[+t.dataset.week].sal=t.value;saveDB();renderSalidas();}
   if(t.id==='limiteSuper'){d.limiteSuper=t.value;saveDB();renderSuper();}
   if(t.id==='limiteSalidas'){d.limiteSalidas=t.value;saveDB();renderSalidas();}
+  if(t.id==='ahorroInicial'){setAhorroInicial(t.value);renderAhorro();}
 });
 
 document.addEventListener('change',function(e){
-  const t=e.target,d=gd();
+  var t=e.target,d=gd();
   if(t.dataset.field==='gas-el'){d.gastos[+t.dataset.idx].el=t.checked;saveDB();renderGastos();renderKPI();}
+  if(t.dataset.field==='gas-rec'){d.gastos[+t.dataset.idx].rec=t.checked;saveDB();renderGastos();}
 });
 
 document.addEventListener('click',function(e){
-  const t=e.target.closest('[data-action]');
-  if(!t)return;
-  const d=gd();
+  var t=e.target.closest('[data-action]');if(!t)return;
+  var d=gd();
   if(t.dataset.action==='del-ing'){d.ingresos.splice(+t.dataset.idx,1);saveDB();renderIngresos();renderKPI();}
   if(t.dataset.action==='del-gas'){d.gastos.splice(+t.dataset.idx,1);saveDB();renderGastos();renderKPI();}
 });
-
-let cNeto=null,cComp=null;
-function renderCharts(){
-  const isDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
-  const gridC=isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
-  const txtC=isDark?'#b0afa8':'#52514e';
-  const labels=[],netoArr=[],ingArr=[],gasArr=[];
-  for(let m=0;m<12;m++){
-    const k=anio+'-'+m;
-    const d=db[k]||defData();
-    labels.push(MESES[m].slice(0,3));
-    netoArr.push(neto(d));ingArr.push(sumIng(d));gasArr.push(sumGas(d));
-  }
-  const fmtT=function(v){return'$'+(v/1000).toFixed(0)+'k'};
-  const tick={color:txtC,font:{size:10}};
-  const grid={color:gridC};
-  if(cNeto)cNeto.destroy();if(cComp)cComp.destroy();
-  cNeto=new Chart(document.getElementById('chartNeto'),{type:'line',
-    data:{labels:labels,datasets:[{label:'Neto',data:netoArr,borderColor:'#2a78d6',backgroundColor:'rgba(42,120,214,0.08)',pointBackgroundColor:'#2a78d6',pointRadius:4,borderWidth:2,tension:0.3,fill:true}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:Object.assign({},tick,{callback:fmtT}),grid:grid},x:{ticks:Object.assign({},tick,{autoSkip:false}),grid:{display:false}}}}
-  });
-  cComp=new Chart(document.getElementById('chartComp'),{type:'bar',
-    data:{labels:labels,datasets:[{label:'Ingresos',data:ingArr,backgroundColor:'rgba(27,175,122,0.75)',borderRadius:3},{label:'Gastos',data:gasArr,backgroundColor:'rgba(227,73,72,0.75)',borderRadius:3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:Object.assign({},tick,{callback:fmtT}),grid:grid},x:{ticks:Object.assign({},tick,{autoSkip:false}),grid:{display:false}}}}
-  });
-}
 
 function renderAll(){
   document.getElementById('mesLabel').textContent=MESES[mes]+' '+anio;
   renderKPI();renderIngresos();renderGastos();renderSuper();renderSalidas();
 }
 
-const n=localStorage.getItem('fdash_name');
-if(n)document.getElementById('nombreUsuario').value=n;
+// Init
+var n=localStorage.getItem('fdash_name');
+if(n) document.getElementById('nombreUsuario').value=n;
 db=loadDB();
 renderAll();
 </script>
